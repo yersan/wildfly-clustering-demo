@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.wildfly.s2i</groupId>
+    <artifactId>wildfly-clustering-demo</artifactId>
+    <version>1.0</version>
+    <packaging>war</packaging>
+
+    <name>maven-web</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>8.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-jar-maven-plugin</artifactId>
+                <version>3.0.2.Final</version>
+                <configuration>
+                    <feature-pack-location>wildfly@maven(org.jboss.universe:community-universe)#22.0.0.Final</feature-pack-location>
+                    <layers>
+                        <layer>jaxrs-server</layer>
+                        <layer>web-clustering</layer>
+                    </layers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>openshift</id>
+            <properties>
+                <jkube.generator.from>registry.redhat.io/ubi8/openjdk-11:latest</jkube.generator.from>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-jar-maven-plugin</artifactId>
+                        <configuration>
+                            <cloud/>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eclipse.jkube</groupId>
+                        <artifactId>openshift-maven-plugin</artifactId>
+                        <version>1.0.2</version>
+                        <configuration>
+                            <resources>
+                                <env>
+                                    <GC_MAX_METASPACE_SIZE>256</GC_MAX_METASPACE_SIZE>
+                                    <GC_METASPACE_SIZE>96</GC_METASPACE_SIZE>
+                                </env>
+                            </resources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>resource</goal>
+                                    <goal>build</goal>
+                                    <goal>apply</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
