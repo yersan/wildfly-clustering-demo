@@ -1,0 +1,4 @@
+/subsystem=jgroups/stack=tcp/protocol=kubernetes.KUBE_PING:remove
+/subsystem=jgroups/stack=tcp/protocol=dns.DNS_PING:add(add-index=0)
+/subsystem=jgroups/stack=tcp/protocol=dns.DNS_PING/property=dns_query:add(value=${env.DNS_PING_SERVICE_NAME})
+/subsystem=jgroups/stack=tcp/protocol=dns.DNS_PING/property=async_discovery_use_separate_thread_per_request:add(value=true)

@@ -63,6 +63,13 @@
                         <artifactId>wildfly-jar-maven-plugin</artifactId>
                         <configuration>
                             <cloud/>
+                            <cli-sessions>
+                                <cli-session>
+                                    <script-files>
+                                        <script>${project.build.scriptSourceDirectory}/configure_dns_ping.cli</script>
+                                    </script-files>
+                                </cli-session>
+                            </cli-sessions>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -74,6 +81,7 @@
                                 <env>
                                     <GC_MAX_METASPACE_SIZE>256</GC_MAX_METASPACE_SIZE>
                                     <GC_METASPACE_SIZE>96</GC_METASPACE_SIZE>
+                                    <DNS_PING_SERVICE_NAME>wildfly-demo-ping-service</DNS_PING_SERVICE_NAME>
                                 </env>
                             </resources>
                         </configuration>
@@ -82,7 +90,6 @@
                                 <goals>
                                     <goal>resource</goal>
                                     <goal>build</goal>
-                                    <goal>apply</goal>
                                 </goals>
                             </execution>
                         </executions>
